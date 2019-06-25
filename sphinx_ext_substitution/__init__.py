@@ -1,1 +1,1 @@
-from substitution import *
+from .substitution import *

@@ -3,18 +3,17 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Test's documentation!
-================================
+:sub:`original-A0`
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+:sub:`id-A1: original-A1`
+
+:sub:`id-A2: original-A2`
+
+:sub:`id-A3: *original-A3*`
+
+:sub:`id-A4: *original-A4*`
 
 
+.. sub:: title
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+      blah
