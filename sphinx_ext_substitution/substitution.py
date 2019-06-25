@@ -14,8 +14,14 @@ class sub(nodes.Admonition, nodes.Element):
 #    pass
 
 data = {
-    'id-A2': 'substitute-A2',
-    'id-A4': '*substitute-A4*',
+    'A2-id': 'A2-substitute',
+    'A4-id': '*A4-substitute*',
+
+    'A11-id': '''\
+A11.1-substitute
+
+*A11.2-substitute*
+''',
     }
 
 
@@ -44,7 +50,23 @@ class SubDirective(Directive):
     required_arguments = 1
     has_content = True
     def run(self):
-        return [nodes.paragraph("Hello, world!")]
+        content = self.content
+        print(content)
+        print(type(content), type(content[1]))
+        id_ = self.arguments[0]
+
+        #if id_ in data:
+        #    content = data[id_]
+        #    print(content)
+        #    #content = nodes.paragraph(content)
+        #    content =  content.split('\n')
+
+        node = nodes.paragraph()
+        self.state.nested_parse(content, self.content_offset, node)
+
+        return [node]
+
+
 
 
         #paragraph_node = nodes.paragraph(text='Hello World!')

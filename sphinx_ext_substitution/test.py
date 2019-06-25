@@ -10,21 +10,33 @@ def doc1():
     data = open(pjoin('testdata/proj', '_build', 'html', 'index.html')).read()
     return data
 
-def test1(doc1):
+def test_role(doc1):
 
-    assert "original-A0" in doc1
+    assert "A0-original" in doc1
 
-    assert "id-A1" not in doc1
-    assert "original-A1" in doc1
-    assert "substitute-A1" not in doc1
+    assert "A1-id" not in doc1
+    assert "A1-original" in doc1
+    assert "A1-substitute" not in doc1
 
-    assert "id-A2" not in doc1
-    assert "original-A2" not in doc1
-    assert "substitute-A2" in doc1
+    assert "A2-id" not in doc1
+    assert "A2-original" not in doc1
+    assert "A2-substitute" in doc1
 
-def test_inline_markup(doc1):
+def test_role_inline_markup(doc1):
 
-    assert "id-A3" not in doc1
-    assert "<em>original-A3</em>" in doc1
+    assert "A3-A3" not in doc1
+    assert "<em>A3-original</em>" in doc1
 
-    assert "<em>substitute-A4</em>" in doc1
+    assert "<em>A4-substitute</em>" in doc1
+
+
+def test_directive(doc1):
+    assert 'A10-id' not in doc1
+    assert 'A10.1-original' in doc1
+    assert '<em>A10.2-original</em>' in doc1
+
+    #assert 'A11.1-original' not in doc1
+    #assert '<em>A11.2-original</em>' not in doc1
+    #assert 'A11.1-substitute' not in doc1
+    #assert '<em>A11.1-substitute</em>' in doc1
+
