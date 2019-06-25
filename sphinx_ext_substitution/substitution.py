@@ -29,13 +29,14 @@ def depart_sub_node(self, node):
 def sub_role(name, rawtext, text, lineno, inliner,
              options={}, content=[]):
     if ':' not in text:
-        return [nodes.Text(text)], []
+        return inliner.parse(text, lineno, inliner, inliner)
     id_, content = text.split(':', 1)
     if id_ in data:
         content = data[id_]
-    node = nodes.paragraph()
-    #content = sphinx.util.nodes.nested_parse_with_titles(content, 0, node)
-    return [nodes.Text(content)], []
+    content = content.lstrip(' ')
+    #import pdb ; pdb.set_trace()
+    content, messages = inliner.parse(content, lineno, inliner, inliner)
+    return content, messages
 
 
 
