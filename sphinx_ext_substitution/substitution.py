@@ -45,21 +45,34 @@ def sub_role(name, rawtext, text, lineno, inliner,
     return content, messages
 
 
+from docutils import statemachine
+#from docutils.core import publish_doctree
 
 class SubDirective(Directive):
     required_arguments = 1
     has_content = True
     def run(self):
         content = self.content
-        print(content)
-        print(type(content), type(content[1]))
+        #print(content)
+        #print(type(content), type(content[1]))
         id_ = self.arguments[0]
 
-        #if id_ in data:
-        #    content = data[id_]
-        #    print(content)
-        #    #content = nodes.paragraph(content)
-        #    content =  content.split('\n')
+        if id_ in data:
+            content = data[id_]
+            #print(content)
+            #content = nodes.paragraph(content)
+            #content =  content.split('\n')
+            #content = statemachine.string2lines(content, 4,
+            #                                          convert_whitespace=True)
+            #content = publish_doctree(content)
+
+            content = statemachine.StringList(
+                                    content.splitlines(), source='file')
+
+
+            #print('===')
+            #print(content)
+            #print(type(content), type(content[1]))
 
         node = nodes.paragraph()
         self.state.nested_parse(content, self.content_offset, node)

@@ -35,8 +35,8 @@ def test_directive(doc1):
     assert 'A10.1-original' in doc1
     assert '<em>A10.2-original</em>' in doc1
 
-    #assert 'A11.1-original' not in doc1
-    #assert '<em>A11.2-original</em>' not in doc1
-    #assert 'A11.1-substitute' not in doc1
-    #assert '<em>A11.1-substitute</em>' in doc1
+    assert 'A11.1-original' not in doc1
+    assert '<em>A11.2-original</em>' not in doc1
+    assert 'A11.1-substitute' in doc1
+    assert '<em>A11.2-substitute</em>' in doc1
 
