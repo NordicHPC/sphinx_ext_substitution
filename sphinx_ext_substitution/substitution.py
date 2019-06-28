@@ -25,22 +25,39 @@ A11.1-substitute
     }
 
 
+#class Data():
+
+
+def get_substitutions(config):
+    return data
+
+
+
 def visit_sub_node(self, node):
     self.visit_admonition(node)
-
 
 def depart_sub_node(self, node):
     self.depart_admonition(node)
 
 def sub_role(name, rawtext, text, lineno, inliner,
              options={}, content=[]):
+
+    print(dir(inliner))
+    inliner.document.settings.config #.substitute_path #config #settings.env.app.config
+    mode = inliner.document.settings.env.config.substitute_mode
+    subs = get_substitutions(inliner.document.settings.env.config)
+
     if ':' not in text:
         return inliner.parse(text, lineno, inliner, inliner)
     id_, content = text.split(':', 1)
+
+
     if id_ in data:
         content = data[id_]
     content = content.lstrip(' ')
     #import pdb ; pdb.set_trace()
+
+
     content, messages = inliner.parse(content, lineno, inliner, inliner)
     return content, messages
 
@@ -48,31 +65,25 @@ def sub_role(name, rawtext, text, lineno, inliner,
 from docutils import statemachine
 #from docutils.core import publish_doctree
 
-class SubDirective(Directive):
+#import sphinx.directives#import Directive
+#print(dir(sphinx.directives))
+#from sphinx.util.docutils import SphinxDirective
+class SubDirective(SphinxDirective):
     required_arguments = 1
     has_content = True
     def run(self):
         content = self.content
-        #print(content)
-        #print(type(content), type(content[1]))
         id_ = self.arguments[0]
+
+        mode = self.config.substitute_mode
+        subs = get_substitutions(self.config)
+
+        import pdb ; pdb.set_trace()
 
         if id_ in data:
             content = data[id_]
-            #print(content)
-            #content = nodes.paragraph(content)
-            #content =  content.split('\n')
-            #content = statemachine.string2lines(content, 4,
-            #                                          convert_whitespace=True)
-            #content = publish_doctree(content)
-
             content = statemachine.StringList(
                                     content.splitlines(), source='file')
-
-
-            #print('===')
-            #print(content)
-            #print(type(content), type(content[1]))
 
         node = nodes.paragraph()
         self.state.nested_parse(content, self.content_offset, node)
@@ -85,9 +96,14 @@ class SubDirective(Directive):
         #paragraph_node = nodes.paragraph(text='Hello World!')
         #return [paragraph_node]
 
+#if not app.config.todo_include_todos
+
 def setup(app):
     app.add_directive("sub", SubDirective)
     app.add_role('sub', sub_role)
+
+    app.add_config_value('substitute_path', ['.'], 'env')
+    app.add_config_value('substitute_mode', 'replace', 'env')
 
     return {
         'version': '0.1',
