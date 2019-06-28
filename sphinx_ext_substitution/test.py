@@ -6,7 +6,7 @@ import pytest
 
 @pytest.fixture(scope='session')
 def doc1():
-    assert not os.system('cd testdata/proj ; make clean html')
+    assert not os.system('cd testdata/proj ; make clean html SPHINXOPTS="-v"')
     data = open(pjoin('testdata/proj', '_build', 'html', 'index.html')).read()
     return data
 
@@ -40,3 +40,24 @@ def test_directive(doc1):
     assert 'A11.1-substitute' in doc1
     assert '<em>A11.2-substitute</em>' in doc1
 
+
+
+@pytest.fixture(scope='session')
+def doc2():
+    assert not os.system('cd testdata/proj ; make clean html SPHINXOPTS="-v -D substitute_mode=both"')
+    data = open(pjoin('testdata/proj', '_build', 'html', 'index.html')).read()
+    return data
+
+def test_mode_both(doc2):
+    assert 'A2-original' in doc2
+    assert 'A2-substitute' in doc2
+
+    assert 'A11.1-original' in doc2
+    assert 'A11.2-substitute' in doc2
+
+def test_both_inline_markup(doc2):
+    assert '<em>A4-original</em>' in doc2
+    assert '<em>A4-substitute</em>' in doc2
+
+    assert '<em>A11.2-original</em>' in doc2
+    assert '<em>A11.2-substitute</em>' in doc2

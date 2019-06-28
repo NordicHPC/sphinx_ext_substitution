@@ -1,3 +1,5 @@
+import re
+
 from docutils import nodes
 from docutils.parsers.rst import Directive
 
@@ -9,6 +11,7 @@ import sphinx.util.nodes
 class sub(nodes.Admonition, nodes.Element):
     pass
 
+id_re = re.compile("^(?:  \(?([^():]+)  [):]   \s+?)", re.VERBOSE)
 
 #class sub(nodes.General, nodes.Element):
 #    pass
@@ -41,24 +44,47 @@ def depart_sub_node(self, node):
 
 def sub_role(name, rawtext, text, lineno, inliner,
              options={}, content=[]):
-
-    print(dir(inliner))
-    inliner.document.settings.config #.substitute_path #config #settings.env.app.config
+    """Substitute roles text"""
     mode = inliner.document.settings.env.config.substitute_mode
     subs = get_substitutions(inliner.document.settings.env.config)
+    print('=====')
 
-    if ':' not in text:
-        return inliner.parse(text, lineno, inliner, inliner)
-    id_, content = text.split(':', 1)
+    # the ID and the non-ID original content
+    m = id_re.match(text)
+    print("text:", text)
+    if m:
+        print("id_=", m.group(1), m.end())
+        id_ = m.group(1)
+        content = text[m.end():]
+        print("content=", content)
+    else:
+        id_ = 'NO_ID'
+        content = text
+        print("content=", content)
 
+    # Find the replacement value, don't use it for anything yet.
+    if id_ in subs:
+        replacement = subs[id_]
+    else:
+        replacement = None
+    print('replacement=', replacement)
 
-    if id_ in data:
-        content = data[id_]
-    content = content.lstrip(' ')
+    # Create new text based on mode, original, and replacement.
+    if mode == 'both':
+        if replacement:
+            content = content + ' ' + replacement
+        else:
+            pass  # content stays the same, what we had before
+        content, messages = inliner.parse(content, lineno, inliner, inliner)
+    elif mode == 'original' or replacement is None:
+        content, messages = inliner.parse(content, lineno, inliner, inliner)
+    elif mode == 'replace':
+        content, messages = inliner.parse(replacement, lineno, inliner, inliner)
+    else:
+        raise ValueError("bad value of substitute_mode")
+
     #import pdb ; pdb.set_trace()
-
-
-    content, messages = inliner.parse(content, lineno, inliner, inliner)
+    print("final content=", content)
     return content, messages
 
 
@@ -72,31 +98,51 @@ class SubDirective(SphinxDirective):
     required_arguments = 1
     has_content = True
     def run(self):
-        content = self.content
-        id_ = self.arguments[0]
-
         mode = self.config.substitute_mode
         subs = get_substitutions(self.config)
+        content = self.content
+        #import pdb ; pdb.set_trace()
 
-        import pdb ; pdb.set_trace()
+        # Find the ID, if any exists
+        if len(self.arguments) >= 1:
+            id_ = self.arguments[0]
+        else:
+            id_ = 'NO_ID'
 
-        if id_ in data:
-            content = data[id_]
-            content = statemachine.StringList(
-                                    content.splitlines(), source='file')
+        # Get the replacement value, don't use it yet
+        if id_ in subs:
+            replacement = subs[id_]
+            replacement = statemachine.StringList(
+                                    replacement.splitlines(), source='file')
+        else:
+            replacement = None
 
-        node = nodes.paragraph()
-        self.state.nested_parse(content, self.content_offset, node)
+        # Create our new text ("result") based on mode, content, and
+        # replacement.
+        if mode == 'both':
+            if replacement:
+                content = content + replacement
+            else:
+                pass  # content stays content
+            node = nodes.paragraph()
+            self.state.nested_parse(content, self.content_offset, node)
+            result = [node]
+        elif mode == 'original' or replacement is None:
+            node = nodes.paragraph()
+            self.state.nested_parse(content, self.content_offset, node)
+            result = [node]
+        elif mode == 'replace':  # default
+            if replacement is None:
+                replacement = content
+            node = nodes.paragraph()
+            self.state.nested_parse(replacement, self.content_offset, node)
+            result = [node]
+        else:
+            raise ValueError("bad value of substitute_mode")
 
-        return [node]
+        return result
 
 
-
-
-        #paragraph_node = nodes.paragraph(text='Hello World!')
-        #return [paragraph_node]
-
-#if not app.config.todo_include_todos
 
 def setup(app):
     app.add_directive("sub", SubDirective)
