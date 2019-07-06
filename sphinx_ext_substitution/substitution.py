@@ -1,3 +1,4 @@
+import os
 import re
 
 from docutils import nodes
@@ -214,6 +215,9 @@ def doctree(app, doctree_):
         print('   ', x)
 
 
+def init_static_path(app):
+    static_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '_static'))
+    app.config.html_static_path.append(static_path)
 
 def setup(app):
     app.add_directive("sub", SubDirective)
@@ -231,6 +235,10 @@ def setup(app):
                  html=(visit_replacement, depart_replacement),
                  html4css1=(visit_replacement, depart_replacement),
                  )
+
+    # Hint is from https://github.com/choldgraf/sphinx-copybutton/blob/master/sphinx_copybutton/__init__.py
+    app.connect('builder-inited', init_static_path)
+    app.add_stylesheet("sphinx_ext_substitution.css")
 
     return {
         'version': '0.1',
