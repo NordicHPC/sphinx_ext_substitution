@@ -35,12 +35,34 @@ def get_substitutions(config):
     return data
 
 
+class Original(nodes.strong):
+    #classes = ['ss-original']
+    pass
 
-def visit_sub_node(self, node):
-    self.visit_admonition(node)
+class Replacement(nodes.emphasis):
+    pass
 
-def depart_sub_node(self, node):
-    self.depart_admonition(node)
+class OriginalBlock(nodes.strong):
+    #classes = ['ss-original']
+    pass
+
+class ReplacementBlock(nodes.emphasis):
+    pass
+
+
+def visit_original(self, node):
+    raise
+    self.body.append('<strong>')
+def depart_original(self, node):
+    raise
+    self.body.append('</strong>')
+
+def visit_replacement(self, node):
+    raise
+    self.body.append('<em>')
+def depart_replacement(self, node):
+    raise
+    self.body.append('</em>')
 
 def sub_role(name, rawtext, text, lineno, inliner,
              options={}, content=[]):
@@ -55,12 +77,12 @@ def sub_role(name, rawtext, text, lineno, inliner,
     if m:
         print("id_=", m.group(1), m.end())
         id_ = m.group(1)
-        content = text[m.end():]
-        print("content=", content)
+        original = text[m.end():]
+        print("original=", original)
     else:
         id_ = 'NO_ID'
-        content = text
-        print("content=", content)
+        original = text
+        print("original=", original)
 
     # Find the replacement value, don't use it for anything yet.
     if id_ in subs:
@@ -71,13 +93,56 @@ def sub_role(name, rawtext, text, lineno, inliner,
 
     # Create new text based on mode, original, and replacement.
     if mode == 'both':
+        #content = [ ]
+        messages = [ ]
+        content = nodes.Element()
+
+        # Make original
+        original1, messages1 = inliner.parse(original, lineno, inliner, inliner)
+        print(original1)
+        #node1 = nodes.Element()
+        node1 = nodes.strong()
+        node1 += nodes.Text('(%s) '%id_)
+        node1 += original1
+        #node1['classes'].append('ss-original')
+        print(node1)
+        #import pdb ; pdb.set_trace()
+        node1.attributes['classes'].append('substitute-original')
+        node1['styles'] = ["color: green"]
+        #node1.attributes['style'] = "color: green"
+        #content.append(node1)
+        content += node1
+        messages.append(messages1)
+        print("BOTH: node1=", node1)
+
+        # Add replacement if needed
         if replacement:
-            content = content + ' ' + replacement
-        else:
-            pass  # content stays the same, what we had before
-        content, messages = inliner.parse(content, lineno, inliner, inliner)
+            original2, messages2 = inliner.parse(replacement, lineno, inliner, inliner)
+            #node2 = Replacement()
+            node2 = nodes.emphasis()
+            node2 += original2
+            #node2 += original2
+            node2.attributes['classes'].append('substitute-replacement')
+            node2['style'] = "color: blue"
+            print("BOTH: node2=", node2)
+
+            #x = nodes.Element()
+            #content.append(node2)
+            #content = content + node2
+
+            x = Replacement()
+            x += node2
+            content = content + x
+            messages.append(messages2)
+        print("BOTH: content=", content)
+
+        messages = messages[0]
+        #content = content[0] + content[1]
     elif mode == 'original' or replacement is None:
-        content, messages = inliner.parse(content, lineno, inliner, inliner)
+        content, messages = inliner.parse(original, lineno, inliner, inliner)
+        node1 = Original()
+        node1 += content
+        content = node1
     elif mode == 'replace':
         content, messages = inliner.parse(replacement, lineno, inliner, inliner)
     else:
@@ -142,14 +207,30 @@ class SubDirective(SphinxDirective):
 
         return result
 
+def doctree(app, doctree_):
+    print('DOCTREE')
+    print(doctree_)
+    for x in doctree_:
+        print('   ', x)
+
 
 
 def setup(app):
     app.add_directive("sub", SubDirective)
     app.add_role('sub', sub_role)
+    app.connect('doctree-read', doctree)
 
     app.add_config_value('substitute_path', ['.'], 'env')
     app.add_config_value('substitute_mode', 'replace', 'env')
+
+    app.add_node(Original,
+                 html=(visit_original, depart_original),
+                 html4css1=(visit_original, depart_original),
+                 )
+    app.add_node(Replacement,
+                 html=(visit_replacement, depart_replacement),
+                 html4css1=(visit_replacement, depart_replacement),
+                 )
 
     return {
         'version': '0.1',

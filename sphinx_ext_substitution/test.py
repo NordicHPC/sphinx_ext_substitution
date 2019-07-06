@@ -44,7 +44,7 @@ def test_directive(doc1):
 
 @pytest.fixture(scope='session')
 def doc2():
-    assert not os.system('cd testdata/proj ; make clean html SPHINXOPTS="-v -D substitute_mode=both"')
+    assert not os.system('cd testdata/proj ; make clean html SPHINXOPTS="-vv -D substitute_mode=both"')
     data = open(pjoin('testdata/proj', '_build', 'html', 'index.html')).read()
     return data
 
