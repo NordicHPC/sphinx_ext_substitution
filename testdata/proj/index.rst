@@ -3,13 +3,17 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-:sub:`A0-original`
+Nothing: :sub:`A0-original`
 
-:sub:`A1-id: A1-original`
-:sub:`A2-id: A2-original`
-:sub:`A3-id: *A3-original*`
-:sub:`A4-id: *A4-original*`
-:sub:`A5-id: *A5-original1* A5-original2`
+No replacement: :sub:`A1-id: A1-original`
+
+Replacement: :sub:`A2-id: A2-original`
+
+No replacement (emphasis): :sub:`A3-id: *A3-original*`
+
+Replacement (emphasis): :sub:`A4-id: *A4-original*`
+
+No replacement (emphasis and no emphasis): :sub:`A5-id: *A5-original1* A5-original2`
 
 
 
