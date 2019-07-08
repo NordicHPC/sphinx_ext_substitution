@@ -3,6 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+Test document
+=============
+
+Roles
+-----
+
 Nothing: :sub:`A0-original`
 
 No replacement: :sub:`A1-id: A1-original`
@@ -16,6 +22,8 @@ Replacement (emphasis): :sub:`A4-id: *A4-original*`
 No replacement (emphasis and no emphasis): :sub:`A5-id: *A5-original1* A5-original2`
 
 
+Directive with no replacement
+-----------------------------
 
 .. sub:: A10-id
 
@@ -23,6 +31,8 @@ No replacement (emphasis and no emphasis): :sub:`A5-id: *A5-original1* A5-origin
 
    *A10.2-original*
 
+Directive with replacement
+--------------------------
 
 .. sub:: A11-id
 
