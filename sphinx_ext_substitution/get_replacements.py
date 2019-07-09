@@ -45,6 +45,8 @@ def load_substitutions(config):
         paths = paths[0].split(':')
     elif isinstance(paths, str):
         paths = paths.split(':')
+    if os.environ.get('SPHINX_EXT_SUBSTITUTION_PATH', ''):
+        paths[0:0] = os.environ['SPHINX_EXT_SUBSTITUTION_PATH'].split(':')
     for path in paths:
         print(path)
         # Directly load YAML files given in the path.

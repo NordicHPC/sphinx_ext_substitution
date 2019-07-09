@@ -136,3 +136,18 @@ def test_load_precedence_rstfirst(doc1_default_precedence_rstfirst):
     """Test loading from the *.rst files"""
     test_role(doc1_default_precedence_rstfirst)
     test_directive(doc1_default_precedence_rstfirst)
+
+@pytest.fixture(scope='session')
+def doc1_path_envvar():
+    """Same, but loading subs from both yaml and single files"""
+    try:
+        os.environ['SPHINX_EXT_SUBSTITUTION_PATH'] = 'substitutions/one-yaml'
+        data = doc(build='_build-path_envvar', subs='')
+    finally:
+        del os.environ['SPHINX_EXT_SUBSTITUTION_PATH']
+    return data
+
+def test_path_envvar(doc1_path_envvar):
+    """Test loading from the *.rst files"""
+    test_role(doc1_path_envvar)
+    test_directive(doc1_path_envvar)
