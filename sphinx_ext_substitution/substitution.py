@@ -7,28 +7,14 @@ from docutils.parsers.rst import Directive
 
 from sphinx.locale import _
 from sphinx.util.docutils import SphinxDirective
-
 import sphinx.util.nodes
+
+from .get_replacements import get_substitutions
 
 class sub(nodes.Admonition, nodes.Element):
     pass
 
 id_re = re.compile("^(?:  \(?([^():]+)  [):]   \s*)", re.VERBOSE)
-
-data = {
-    'A2-id': 'A2-substitute',
-    'A4-id': '*A4-substitute*',
-
-    'A11-id': '''\
-A11.1-substitute
-
-*A11.2-substitute*
-''',
-    }
-
-
-def get_substitutions(config):
-    return data
 
 
 class Original(nodes.strong):

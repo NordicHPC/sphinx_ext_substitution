@@ -6,10 +6,10 @@ import pytest
 
 
 
-def doc(build="_build-default", opts=""):
+def doc(build="_build-default", subs='-D substitute_path=substitutions/one-yaml/', opts=""):
     """Generic function to build a document with different modes"""
     assert not os.system('rm -rf testdata/proj/%s/'%build)
-    assert not os.system('cd testdata/ ; sphinx-build -M html proj/ proj/%s/ -v %s'%(build, opts))
+    assert not os.system('cd testdata/ ; sphinx-build -M html proj/ proj/%s/ -v %s %s'%(build, subs, opts))
     data = open(pjoin('testdata/proj/', build, 'html', 'index.html')).read()
     return data
 
@@ -21,12 +21,12 @@ def doc1_default():
 @pytest.fixture(scope='session')
 def doc1_both():
     """Document with substitute_mode=both"""
-    return doc(build='_build-both', opts="-vv -D substitute_mode=both")
+    return doc(build='_build-both', opts="-D substitute_mode=both")
 
 @pytest.fixture(scope='session')
 def doc1_original():
     """Document with substitute_mode=original"""
-    return doc(build='_build-original', opts="-vv -D substitute_mode=original")
+    return doc(build='_build-original', opts="-D substitute_mode=original")
 
 
 
@@ -97,3 +97,42 @@ def test_original_inline_markup(doc1_original):
 
     assert '<em>A10.2-original</em>' in doc1_original
     assert '<em>A11.2-original</em>' in doc1_original
+
+
+
+@pytest.fixture(scope='session')
+def doc1_default_rstsubs():
+    """Same, but loading subs from yaml"""
+    return doc(subs='-D substitute_path=substitutions/individual/')
+
+def test_load_rstsubs(doc1_default_rstsubs):
+    """Test loading from the *.rst files"""
+    test_role(doc1_default_rstsubs)
+    test_directive(doc1_default_rstsubs)
+
+@pytest.fixture(scope='session')
+def doc1_default_mix():
+    """Same, but loading subs from both yaml and single files"""
+    return doc(build='_build-mix', subs='-D substitute_path=substitutions/mix/individual/:substitutions/mix/one-yaml/')
+def test_load_mix(doc1_default_mix):
+    """Test loading from the *.rst files"""
+    test_role(doc1_default_mix)
+    test_directive(doc1_default_mix)
+
+@pytest.fixture(scope='session')
+def doc1_default_precedence_yamlfirst():
+    """Same, but loading subs from both yaml and single files"""
+    return doc(build='_build-precedence-yamlfirst',subs='-D substitute_path=substitutions/precedence-yamlfirst/one-yaml/:substitutions/precedence-yamlfirst/individual/')
+def test_load_precedence_yamlfirst(doc1_default_precedence_yamlfirst):
+    """Test loading from the *.rst files"""
+    test_role(doc1_default_precedence_yamlfirst)
+    test_directive(doc1_default_precedence_yamlfirst)
+
+@pytest.fixture(scope='session')
+def doc1_default_precedence_rstfirst():
+    """Same, but loading subs from both yaml and single files"""
+    return doc(build='_build-precedence-rstfirst', subs='-D substitute_path=substitutions/precedence-rstfirst/individual/:substitutions/precedence-rstfirst/one-yaml/')
+def test_load_precedence_rstfirst(doc1_default_precedence_rstfirst):
+    """Test loading from the *.rst files"""
+    test_role(doc1_default_precedence_rstfirst)
+    test_directive(doc1_default_precedence_rstfirst)
