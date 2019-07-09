@@ -2,6 +2,7 @@ import os
 import re
 
 from docutils import nodes
+from docutils import statemachine
 from docutils.parsers.rst import Directive
 
 from sphinx.locale import _
@@ -14,9 +15,6 @@ class sub(nodes.Admonition, nodes.Element):
 
 id_re = re.compile("^(?:  \(?([^():]+)  [):]   \s*)", re.VERBOSE)
 
-#class sub(nodes.General, nodes.Element):
-#    pass
-
 data = {
     'A2-id': 'A2-substitute',
     'A4-id': '*A4-substitute*',
@@ -27,9 +25,6 @@ A11.1-substitute
 *A11.2-substitute*
 ''',
     }
-
-
-#class Data():
 
 
 def get_substitutions(config):
@@ -51,19 +46,19 @@ class ReplacementBlock(nodes.emphasis):
     pass
 
 
-def visit_original(self, node):
-    raise
-    self.body.append('<strong>')
-def depart_original(self, node):
-    raise
-    self.body.append('</strong>')
-
-def visit_replacement(self, node):
-    raise
-    self.body.append('<em>')
-def depart_replacement(self, node):
-    raise
-    self.body.append('</em>')
+#def visit_original(self, node):
+#    raise
+#    self.body.append('<strong>')
+#def depart_original(self, node):
+#    raise
+#    self.body.append('</strong>')
+#
+#def visit_replacement(self, node):
+#    raise
+#    self.body.append('<em>')
+#def depart_replacement(self, node):
+#    raise
+#    self.body.append('</em>')
 
 def sub_role(name, rawtext, text, lineno, inliner,
              options={}, content=[]):
@@ -94,40 +89,26 @@ def sub_role(name, rawtext, text, lineno, inliner,
 
         # Make original
         original1, messages1 = inliner.parse(original, lineno, inliner, inliner)
-        #node1 = nodes.Element()
         node1 = nodes.strong()
         node1 += nodes.Text('(%s) '%id_)
         node1 += original1
-        #node1['classes'].append('ss-original')
-        #import pdb ; pdb.set_trace()
         node1.attributes['classes'].append('substitute-original')
-        node1['styles'] = ["color: green"]
-        #node1.attributes['style'] = "color: green"
-        #content.append(node1)
+        #node1['styles'] = ["color: green"]
         content += node1
         messages.append(messages1)
-
         # Add replacement if needed
         if replacement:
             original2, messages2 = inliner.parse(replacement, lineno, inliner, inliner)
             #node2 = Replacement()
             node2 = nodes.emphasis()
             node2 += original2
-            #node2 += original2
             node2.attributes['classes'].append('substitute-replacement')
-            node2['style'] = "color: blue"
-
-            #x = nodes.Element()
-            #content.append(node2)
-            #content = content + node2
-
+            #node2['style'] = "color: blue"
             x = Replacement()
             x += node2
             content = content + x
             messages.append(messages2)
-
         messages = messages[0]
-        #content = content[0] + content[1]
     elif mode == 'original' or replacement is None:
         content, messages = inliner.parse(original, lineno, inliner, inliner)
         node1 = Original()
@@ -138,16 +119,9 @@ def sub_role(name, rawtext, text, lineno, inliner,
     else:
         raise ValueError("bad value of substitute_mode")
 
-    #import pdb ; pdb.set_trace()
     return content, messages
 
 
-from docutils import statemachine
-#from docutils.core import publish_doctree
-
-#import sphinx.directives#import Directive
-#print(dir(sphinx.directives))
-#from sphinx.util.docutils import SphinxDirective
 class SubDirective(SphinxDirective):
     required_arguments = 1
     has_content = True
@@ -155,7 +129,6 @@ class SubDirective(SphinxDirective):
         mode = self.config.substitute_mode
         subs = get_substitutions(self.config)
         original = self.content
-        #import pdb ; pdb.set_trace()
 
         # Find the ID, if any exists
         if len(self.arguments) >= 1:
@@ -183,7 +156,6 @@ class SubDirective(SphinxDirective):
             self.state.nested_parse(original, self.content_offset, node)
             content += node
             result.append(content)
-
             if replacement:
                 content = nodes.admonition()
                 content['classes'].append('substitute-replacement')
@@ -208,12 +180,6 @@ class SubDirective(SphinxDirective):
 
         return result
 
-def doctree(app, doctree_):
-    print('DOCTREE')
-    print(doctree_)
-    for x in doctree_:
-        print('   ', x)
-
 
 def init_static_path(app):
     static_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '_static'))
@@ -222,18 +188,17 @@ def init_static_path(app):
 def setup(app):
     app.add_directive("sub", SubDirective)
     app.add_role('sub', sub_role)
-    app.connect('doctree-read', doctree)
 
     app.add_config_value('substitute_path', ['.'], 'env')
     app.add_config_value('substitute_mode', 'replace', 'env')
 
     app.add_node(Original,
-                 html=(visit_original, depart_original),
-                 html4css1=(visit_original, depart_original),
+                 #html=(visit_original, depart_original),
+                 #html4css1=(visit_original, depart_original),
                  )
     app.add_node(Replacement,
-                 html=(visit_replacement, depart_replacement),
-                 html4css1=(visit_replacement, depart_replacement),
+                 #html=(visit_replacement, depart_replacement),
+                 #html4css1=(visit_replacement, depart_replacement),
                  )
 
     # Hint is from https://github.com/choldgraf/sphinx-copybutton/blob/master/sphinx_copybutton/__init__.py
