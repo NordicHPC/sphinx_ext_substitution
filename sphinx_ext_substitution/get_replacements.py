@@ -48,17 +48,14 @@ def load_substitutions(config):
     if os.environ.get('SPHINX_EXT_SUBSTITUTION_PATH', ''):
         paths[0:0] = os.environ['SPHINX_EXT_SUBSTITUTION_PATH'].split(':')
     for path in paths:
-        print(path)
         # Directly load YAML files given in the path.
         if os.path.isfile(path):
             _load_yaml(path, SUBSTITUTIONS)
             continue
         # Load ID.rst files
         for fname in glob.glob(pjoin(path, '*.rst')):
-            print(fname)
             id_ = os.path.basename(fname)[:-4]
             if id_ not in substitutions:
-                print(id_)
                 substitutions[id_] = open(fname).read().strip()
         # Load *.yaml files
         for fname in glob.glob(pjoin(path, '*.yaml')):
@@ -72,7 +69,6 @@ def get_substitutions(config):
     """Get substitutions.  This is the main entrypoint to get all substitutions."""
     if SUBSTITUTIONS:
         return SUBSTITUTIONS
-    print(config.substitute_path)
     if config.substitute_path == ['TESTDATA']:
         return testdata
     return load_substitutions(config)
