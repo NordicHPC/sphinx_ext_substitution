@@ -39,3 +39,8 @@ Directive with replacement
    A11.1-original
 
    *A11.2-original*
+
+Directive with no content
+-------------------------
+
+.. sub:: A12-id
