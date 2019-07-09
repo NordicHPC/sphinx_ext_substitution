@@ -70,27 +70,21 @@ def sub_role(name, rawtext, text, lineno, inliner,
     """Substitute roles text"""
     mode = inliner.document.settings.env.config.substitute_mode
     subs = get_substitutions(inliner.document.settings.env.config)
-    print('=====')
 
     # the ID and the non-ID original content
     m = id_re.match(text)
-    print("text:", text)
     if m:
-        print("id_=", m.group(1), m.end())
         id_ = m.group(1)
         original = text[m.end():]
-        print("original=", original)
     else:
         id_ = 'NO_ID'
         original = text
-        print("original=", original)
 
     # Find the replacement value, don't use it for anything yet.
     if id_ in subs:
         replacement = subs[id_]
     else:
         replacement = None
-    print('replacement=', replacement)
 
     # Create new text based on mode, original, and replacement.
     if mode == 'both':
@@ -100,13 +94,11 @@ def sub_role(name, rawtext, text, lineno, inliner,
 
         # Make original
         original1, messages1 = inliner.parse(original, lineno, inliner, inliner)
-        print(original1)
         #node1 = nodes.Element()
         node1 = nodes.strong()
         node1 += nodes.Text('(%s) '%id_)
         node1 += original1
         #node1['classes'].append('ss-original')
-        print(node1)
         #import pdb ; pdb.set_trace()
         node1.attributes['classes'].append('substitute-original')
         node1['styles'] = ["color: green"]
@@ -114,7 +106,6 @@ def sub_role(name, rawtext, text, lineno, inliner,
         #content.append(node1)
         content += node1
         messages.append(messages1)
-        print("BOTH: node1=", node1)
 
         # Add replacement if needed
         if replacement:
@@ -125,7 +116,6 @@ def sub_role(name, rawtext, text, lineno, inliner,
             #node2 += original2
             node2.attributes['classes'].append('substitute-replacement')
             node2['style'] = "color: blue"
-            print("BOTH: node2=", node2)
 
             #x = nodes.Element()
             #content.append(node2)
@@ -135,7 +125,6 @@ def sub_role(name, rawtext, text, lineno, inliner,
             x += node2
             content = content + x
             messages.append(messages2)
-        print("BOTH: content=", content)
 
         messages = messages[0]
         #content = content[0] + content[1]
@@ -150,7 +139,6 @@ def sub_role(name, rawtext, text, lineno, inliner,
         raise ValueError("bad value of substitute_mode")
 
     #import pdb ; pdb.set_trace()
-    print("final content=", content)
     return content, messages
 
 
@@ -195,7 +183,6 @@ class SubDirective(SphinxDirective):
             self.state.nested_parse(original, self.content_offset, node)
             content += node
             result.append(content)
-            print('x'*400, result)
 
             if replacement:
                 content = nodes.admonition()
