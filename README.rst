@@ -20,7 +20,7 @@ Features include:
   In the "both" mode, both the original and substituted are shown with
   highlighting, so that you can easily compare the current original
   values with your current substitute values.
-- Both role and directive support.
+- Both role (inline) and directive (paragraph level) support.
 
 
 
@@ -43,33 +43,90 @@ As a directive::
 
    .. sub:: ssh_clarification
 
-       (optional content)
-
-
 This directive works analogously to the role, with an ID of
-``ssh_clarification``.  If content is missing, there will be nothing
-in the case that no substitution is defined, so in this case when used
-without content it can be used to add in an extra content in just some
-places.  If the directive had content, then it would work the same as
+``ssh_clarification``.  There is no default content in this example,
+which means that nothing is inserted unless a replacement is defined ,
+so in this case when used without content it can be used to add in an
+extra content in just some versions.  (There could be default content,
+too.)  If the directive had content, then it would work the same as
 the first example.
 
 As a reminder, in Docutils/Sphinx, a role is inline text and a
 directive is a paragraph-level structure.
 
+There are three run modes, controlled by the ``substitution_mode``
+configuration option:
 
+* ``replace``: Use the replacements if defined or else the original,
+  with no special markup.  This is the default mode and does what you
+  expect for normal use.
+
+* ``both``: Show *both* the ID, original value, and the replacement
+  value with distinguishing markup (HTML only).  This can be used to
+  compare your local version with the latest upstream. to see what
+  needs to be updated - or what substitutions are available and should
+  be used.
+
+* ``original``: Show only the original text without any replacements.
+
+
+When searching for replacement values:
+
+1. First, each item in the search path (configuration option
+   ``substitute_path``) is searched.
+
+   a. If it's a file, load it as YAML (see below)
+
+   b. If it's a directory, go to step 2.
+
+2. List the directory and search for files to load.
+
+   a. First, load all ``*.rst`` files.  The ``*`` value is used as the
+      replacement ID.
+
+   b. Second, search for all ``*.yaml`` files.  Load them as YAML
+      data, which should be a mapping from keys to values.
+
+   c. All values are ``.strip()``\ ped.
+
+3. Use the first-detected value for each ID.  Thus, earlier items in
+   the search path take precedence over later ones.
+
+
+YAML reminder::
+
+  ID1: this is the text for replacement id = ID1
+  ID2: |
+      This is a block text that preserves newlines.
+
+      The "|" character is what indicates that newlines should be
+      preserved.
+  ID3: >
+      Using the ">" character removes all newlines and runs the block
+      text together.
+
+
+
+Configuration
+-------------
 
 Currently there are two Sphinx variables defined:
 
-* ``substitute_mode``: One of ``original``, ``replace`` (the default),
-  or ``both`` (for including both marked up to compare).
+* ``substitute_mode``: One of ``replace`` (the default), ``original``,
+  or ``both``.  See above for the meaning of these values.
 
 * ``substitute_path`` is a path to search for replacement variables,
-  either ``$ID.rst`` or ``*.yaml`` with an key of ``$ID``.
+  keyed by ID.  In Sphinx, this is a list of paths, but if given on
+  command with ``-D substitute_path=dir1:dir2``, you can
+  colon-separate paths as well.  Each file on this path that ends in
+  ``.rst`` or ``.yaml`` is searched for variables.
+
 
 
 Development and maintenance
 ---------------------------
 
-This is still "under development" and doesn't yet work.  This also a
-call for help (this is really being developed without enough
-Sphinx/Docutils knowledge): it's not too late to make major changes.
+This is still "under development" but the basic functionality is
+there.  Please send any changes
+
+Primary maintainer: Richard Darst, Aalto University.
