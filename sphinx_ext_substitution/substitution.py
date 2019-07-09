@@ -88,14 +88,13 @@ def sub_role(name, rawtext, text, lineno, inliner,
         content = nodes.Element()
 
         # Make original
-        original1, messages1 = inliner.parse(original, lineno, inliner, inliner)
+        original1, messages = inliner.parse(original, lineno, inliner, inliner)
         node1 = nodes.strong()
         node1 += nodes.Text('(%s) '%id_)
         node1 += original1
         node1.attributes['classes'].append('substitute-original')
         #node1['styles'] = ["color: green"]
         content += node1
-        messages.append(messages1)
         # Add replacement if needed
         if replacement:
             original2, messages2 = inliner.parse(replacement, lineno, inliner, inliner)
@@ -107,8 +106,8 @@ def sub_role(name, rawtext, text, lineno, inliner,
             x = Replacement()
             x += node2
             content = content + x
-            messages.append(messages2)
-        messages = messages[0]
+            #messages.append(messages2)
+            messages += messages2
     elif mode == 'original' or replacement is None:
         content, messages = inliner.parse(original, lineno, inliner, inliner)
         node1 = Original()
