@@ -16,6 +16,7 @@ class sub(nodes.Admonition, nodes.Element):
 
 id_re = re.compile("^(?:  \(?([^():]+)  [):]   \s*)", re.VERBOSE)
 
+USED_SUBSTITUTIONS = { }
 
 class Original(nodes.strong):
     #classes = ['ss-original']
@@ -66,6 +67,8 @@ def sub_role(name, rawtext, text, lineno, inliner,
         replacement = subs[id_]
     else:
         replacement = None
+
+    USED_SUBSTITUTIONS[id_] = (original, replacement)
 
     # Create new text based on mode, original, and replacement.
     if mode == 'both':
@@ -129,6 +132,13 @@ class SubDirective(SphinxDirective):
         else:
             replacement = None
 
+        def stringify(s):
+            if isinstance(s, (list, statemachine.StringList)):
+                return '\n'.join(s)
+            return s
+        print(original, type(original))
+        USED_SUBSTITUTIONS[id_] = (stringify(original), stringify(replacement))
+
         # Create our new text ("result") based on mode, content, and
         # replacement.
         if mode == 'both':
@@ -166,6 +176,46 @@ class SubDirective(SphinxDirective):
         return result
 
 
+class SubListDirective(SphinxDirective):
+    def run(self):
+        table = nodes.table()
+        tgroup = nodes.tgroup(cols=3)
+        table += tgroup
+
+        # This is apparently required, the default is to divide 100
+        # evenly by number of columns.
+        col_widths = [33, 33, 33]
+        for col_width in col_widths:
+            colspec = nodes.colspec(colwidth=col_width)
+            tgroup += colspec
+
+        # Construct header
+        thead = nodes.thead()
+        header = ["ID", "Original", "Replacement"]
+        row_node = nodes.row()
+        for cell in header:
+            entry = nodes.entry()
+            entry += nodes.Text(cell)
+            row_node += entry
+        thead.extend([row_node])
+        tgroup += thead
+
+        rows = [ ]
+        for id_, (original, replacement) in sorted(USED_SUBSTITUTIONS.items()):
+            row = [id_, original, replacement]
+            row_node = nodes.row()
+            for cell in row:
+                entry = nodes.entry()
+                entry += nodes.Text(cell) if cell else None
+                row_node += entry
+            rows.append(row_node)
+        tbody = nodes.tbody()
+        tbody.extend(rows)
+        tgroup += tbody
+
+        return [table]
+
+
 def init_static_path(app):
     static_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '_static'))
     app.config.html_static_path.append(static_path)
@@ -173,6 +223,7 @@ def init_static_path(app):
 def setup(app):
     app.add_directive("sub", SubDirective)
     app.add_role('sub', sub_role)
+    app.add_directive("sub-list", SubListDirective)
 
     app.add_config_value('substitute_path', ['.'], 'env')
     app.add_config_value('substitute_mode', 'replace', 'env')

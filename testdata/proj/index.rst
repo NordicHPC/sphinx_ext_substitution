@@ -5,6 +5,7 @@
 
 Test document
 =============
+.. sub-list::
 
 Roles
 -----
@@ -46,3 +47,8 @@ Directive with no content
 -------------------------
 
 .. sub:: A12-id
+
+Substitution list
+-----------------
+
+.. sub-list::
