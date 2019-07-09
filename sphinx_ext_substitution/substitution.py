@@ -12,7 +12,7 @@ import sphinx.util.nodes
 class sub(nodes.Admonition, nodes.Element):
     pass
 
-id_re = re.compile("^(?:  \(?([^():]+)  [):]   \s+?)", re.VERBOSE)
+id_re = re.compile("^(?:  \(?([^():]+)  [):]   \s*)", re.VERBOSE)
 
 #class sub(nodes.General, nodes.Element):
 #    pass
