@@ -29,7 +29,7 @@ def _load_yaml(fname, substitutions):
     data = yaml.load(open(fname), Loader=yaml.SafeLoader)
     for key, value in data.items():
         if key not in substitutions:
-            substitutions[key] = value
+            substitutions[key] = value.strip()
 
 def load_substitutions(config):
     """Load substitutions from disk.  Cache results to SUBSTITUTIONS.
