@@ -119,7 +119,14 @@ Currently there are two Sphinx variables defined:
   keyed by ID.  In Sphinx, this is a list of paths, but if given on
   command with ``-D substitute_path=dir1:dir2``, you can
   colon-separate paths as well.  Each file on this path that ends in
-  ``.rst`` or ``.yaml`` is searched for variables.
+  ``.rst`` or ``.yaml`` is searched for variables.  The default is
+  ``.``.
+
+* The environment variable ``SPHINX_EXT_SUBSTITUTION_PATH`` is used
+  *before* the ``substitute_path`` configuration option.  Both are
+  used if both are given (the env var takes precedence).  There is no
+  need for both, but it provides more flexible configuration for
+  integration to your build system.
 
 
 
