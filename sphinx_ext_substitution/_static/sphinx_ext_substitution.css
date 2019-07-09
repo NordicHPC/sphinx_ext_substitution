@@ -1,7 +1,15 @@
 .substitute-original {
-    color: blue;
+    //color: blue;
+    background-color: lightblue;
+}
+div.substitute-original {
+    background-color: lightblue;
 }
 
 .substitute-replacement {
-    color: green;
+    //color: green;
+    background-color: lightcyan;
+}
+div.substitute-replacement {
+    background-color: lightcyan;
 }

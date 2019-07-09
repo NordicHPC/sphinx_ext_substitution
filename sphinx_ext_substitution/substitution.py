@@ -166,7 +166,7 @@ class SubDirective(SphinxDirective):
     def run(self):
         mode = self.config.substitute_mode
         subs = get_substitutions(self.config)
-        content = self.content
+        original = self.content
         #import pdb ; pdb.set_trace()
 
         # Find the ID, if any exists
@@ -186,20 +186,33 @@ class SubDirective(SphinxDirective):
         # Create our new text ("result") based on mode, content, and
         # replacement.
         if mode == 'both':
-            if replacement:
-                content = content + replacement
-            else:
-                pass  # content stays content
+            result = []
+            content = nodes.admonition()
+            content['classes'].append('substitute-original')
+            title_text = "%s (original)"%id_
+            content += nodes.title(title_text, '', nodes.Text(title_text))
             node = nodes.paragraph()
-            self.state.nested_parse(content, self.content_offset, node)
-            result = [node]
+            self.state.nested_parse(original, self.content_offset, node)
+            content += node
+            result.append(content)
+            print('x'*400, result)
+
+            if replacement:
+                content = nodes.admonition()
+                content['classes'].append('substitute-replacement')
+                title_text = "(replacement)"
+                content += nodes.title(title_text, '', nodes.Text(title_text))
+                node = nodes.paragraph()
+                self.state.nested_parse(replacement, self.content_offset, node)
+                content += node
+                result[-1].append(content)
         elif mode == 'original' or replacement is None:
             node = nodes.paragraph()
-            self.state.nested_parse(content, self.content_offset, node)
+            self.state.nested_parse(original, self.content_offset, node)
             result = [node]
         elif mode == 'replace':  # default
             if replacement is None:
-                replacement = content
+                replacement = original
             node = nodes.paragraph()
             self.state.nested_parse(replacement, self.content_offset, node)
             result = [node]

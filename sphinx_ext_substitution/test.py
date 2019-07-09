@@ -84,7 +84,7 @@ def test_both_css_roles(doc1_both):
     assert re.search('class="substitute-original"[^>]*>\(A3-id\) ?<em>A3-original', doc1_both)
 
 
-def test_mode_both(doc1_original):
+def test_mode_original(doc1_original):
     assert 'A2-original' in doc1_original
     assert 'A2-substitute' not in doc1_original
 
