@@ -114,6 +114,24 @@ YAML reminder::
       text together.
 
 
+Installation
+------------
+Install the extension.  Currently not in any package managers, so::
+
+    pip install
+
+Add the extension to your Sphinx ``conf.py`` file::
+
+    extensions = [
+        'sphinx_ext_substitution'
+    ]
+
+There are no non-trivial dependencies besides PyYAML (which is listed
+as a dependency, but if you don't use the YAML feature it isn't
+needed).  Sphinx and Docutils are obviously required - our goal is to
+support any reasonable version.
+
+
 
 Configuration
 -------------
@@ -141,7 +159,9 @@ Currently there are two Sphinx variables defined:
 Development and maintenance
 ---------------------------
 
-This is still "under development" but the basic functionality is
-there.  Please send any changes
+Most functonality exists and this is now usable, but not extensively
+used yet.  Please send any changes or requests to us.  This was
+developed as a first non-trivial Sphinx extension, so any refactorings
+to make things better are welcome.
 
 Primary maintainer: Richard Darst, Aalto University.
