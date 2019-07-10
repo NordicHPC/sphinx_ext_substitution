@@ -13,6 +13,5 @@ setup(name='sphinx_ext_substitution',
       url="https://github.com/NordicHPC/sphinx_ext_substitution",
       author='Richard Darst',
       author_email='rkd@zgib.net',
-      url='',
       packages=['sphinx_ext_substitution'],
   )
