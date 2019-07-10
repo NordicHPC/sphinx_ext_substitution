@@ -16,8 +16,6 @@ class sub(nodes.Admonition, nodes.Element):
 
 id_re = re.compile("^(?:  \(?([^():]+)  [):]   \s*)", re.VERBOSE)
 
-USED_SUBSTITUTIONS = { }
-
 class Original(nodes.strong):
     #classes = ['ss-original']
     pass
@@ -47,6 +45,8 @@ class ReplacementBlock(nodes.emphasis):
 #    raise
 #    self.body.append('</em>')
 
+
+
 def sub_role(name, rawtext, text, lineno, inliner,
              options={}, content=[]):
     """Substitute roles text"""
@@ -68,7 +68,14 @@ def sub_role(name, rawtext, text, lineno, inliner,
     else:
         replacement = None
 
-    USED_SUBSTITUTIONS[id_] = (original, replacement)
+    # Save list of substitutions for the sub-list directive
+    env = inliner.document.settings.env
+    if not hasattr(env, 'substitute_all_subs'):
+        env.substitute_all_subs = { }
+    if id_ != 'NO_ID':
+        env.substitute_all_subs[id_] = dict(original=original,
+                                            replacement=replacement,
+                                            docname=env.docname)
 
     # Create new text based on mode, original, and replacement.
     if mode == 'both':
@@ -110,6 +117,7 @@ def sub_role(name, rawtext, text, lineno, inliner,
     return content, messages
 
 
+
 class SubDirective(SphinxDirective):
     required_arguments = 1
     has_content = True
@@ -132,12 +140,19 @@ class SubDirective(SphinxDirective):
         else:
             replacement = None
 
+        # Save list of substitutions for the sub-list directive
         def stringify(s):
             if isinstance(s, (list, statemachine.StringList)):
                 return '\n'.join(s)
             return s
         print(original, type(original))
-        USED_SUBSTITUTIONS[id_] = (stringify(original), stringify(replacement))
+        env = self.env
+        if not hasattr(env, 'substitute_all_subs'):
+            env.substitute_all_subs = { }
+        if id_ != 'NO_ID':
+            env.substitute_all_subs[id_] = dict(original=stringify(original),
+                                                replacement=stringify(replacement),
+                                                docname=env.docname)
 
         # Create our new text ("result") based on mode, content, and
         # replacement.
@@ -176,8 +191,32 @@ class SubDirective(SphinxDirective):
         return result
 
 
+
+# The sublist node is only needed because we have to insert a
+# placeholder during the first pass, and come back later once we know
+# all the substitutions and insert them where sub-list was requested.
+class sublist(nodes.General, nodes.Element):
+        pass
+
 class SubListDirective(SphinxDirective):
     def run(self):
+        # This is filled when the process_sublist event is run.
+        return [sublist('')]
+
+def purge_sublist(app, env, docname):
+    """Clear out cached data when each document (file) is parsed.
+
+    TODO: make this not a linear search?
+    """
+    if not hasattr(env, 'substitute_all_subs'):
+        return
+    env.substitute_all_subs = [sub for sub in env.substitute_all_subs
+                               if sub['docname'] != docname]
+
+def process_sublist(app, doctree, fromdocname):
+    """Find all sub-list directives and fill it with all substitutions."""
+    env = app.builder.env
+    for node in doctree.traverse(sublist):
         table = nodes.table()
         tgroup = nodes.tgroup(cols=3)
         table += tgroup
@@ -189,7 +228,7 @@ class SubListDirective(SphinxDirective):
             colspec = nodes.colspec(colwidth=col_width)
             tgroup += colspec
 
-        # Construct header
+        # Construct header row
         thead = nodes.thead()
         header = ["ID", "Original", "Replacement"]
         row_node = nodes.row()
@@ -200,8 +239,12 @@ class SubListDirective(SphinxDirective):
         thead.extend([row_node])
         tgroup += thead
 
+        # Construct all rows
         rows = [ ]
-        for id_, (original, replacement) in sorted(USED_SUBSTITUTIONS.items()):
+        #for id_, (original, replacement) in sorted(USED_SUBSTITUTIONS.items()):
+        for id_, data in sorted(env.substitute_all_subs.items()):
+            original = data['original']
+            replacement = data['replacement']
             row = [id_, original, replacement]
             row_node = nodes.row()
             for cell in row:
@@ -213,21 +256,26 @@ class SubListDirective(SphinxDirective):
         tbody.extend(rows)
         tgroup += tbody
 
-        return [table]
+        node.replace_self([table])
 
 
+
+# Add our custom CSS to the headers.
 def init_static_path(app):
     static_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '_static'))
     app.config.html_static_path.append(static_path)
 
-def setup(app):
-    app.add_directive("sub", SubDirective)
-    app.add_role('sub', sub_role)
-    app.add_directive("sub-list", SubListDirective)
 
+
+def setup(app):
+    # Config values
     app.add_config_value('substitute_path', ['.'], 'env')
     app.add_config_value('substitute_mode', 'replace', 'env')
 
+    # Roles and directives
+    app.add_directive("sub", SubDirective)
+    app.add_role('sub', sub_role)
+    # Nodes (visitor functions do not currently work and are not needed?)
     app.add_node(Original,
                  #html=(visit_original, depart_original),
                  #html4css1=(visit_original, depart_original),
@@ -237,6 +285,12 @@ def setup(app):
                  #html4css1=(visit_replacement, depart_replacement),
                  )
 
+    # sub-list directive
+    app.add_directive("sub-list", SubListDirective)
+    app.connect('doctree-resolved', process_sublist)
+    app.connect('env-purge-doc', purge_sublist)
+
+    # Add CSS to build
     # Hint is from https://github.com/choldgraf/sphinx-copybutton/blob/master/sphinx_copybutton/__init__.py
     app.connect('builder-inited', init_static_path)
     app.add_stylesheet("sphinx_ext_substitution.css")

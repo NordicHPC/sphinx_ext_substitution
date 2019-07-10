@@ -5,7 +5,6 @@
 
 Test document
 =============
-.. sub-list::
 
 Roles
 -----
