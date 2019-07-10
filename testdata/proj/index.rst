@@ -21,7 +21,7 @@ Replacement (emphasis): :sub:`A4-id: *A4-original*`
 
 No replacement (emphasis and no emphasis): :sub:`A5-id: *A5-original1* A5-original2`
 
-No content: :sub:`(A5.1-id)` :sub:`A5.2-id:`
+No content: :sub:`(A6.1-id)` :sub:`A6.2-id:`
 
 
 Directive with no replacement
