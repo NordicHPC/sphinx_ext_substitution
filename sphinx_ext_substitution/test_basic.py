@@ -165,8 +165,8 @@ def test_path_envvar(doc1_path_envvar):
 
 def test_sublist(doc1_default):
     sub_list = doc1_default['sub-list']
-    assert '<td>A1-id</td>' in sub_list
-    assert '<td>A1-original</td>' in sub_list
-    assert '<td>A2-id</td>' in sub_list
-    assert '<td>A2-original</td>' in sub_list
-    assert '<td>A2-substitute</td>' in sub_list
+    assert 'A1-id' in sub_list
+    assert 'A1-original' in sub_list
+    assert 'A2-id' in sub_list
+    assert 'A2-original' in sub_list
+    assert 'A2-substitute' in sub_list

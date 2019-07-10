@@ -237,7 +237,8 @@ def process_sublist(app, doctree, fromdocname):
         row_node = nodes.row()
         for cell in header:
             entry = nodes.entry()
-            entry += nodes.Text(cell)
+            #entry += nodes.Text(cell)
+            entry += nodes.paragraph(text=cell)
             row_node += entry
         thead.extend([row_node])
         tgroup += thead
@@ -252,7 +253,9 @@ def process_sublist(app, doctree, fromdocname):
             row_node = nodes.row()
             for cell in row:
                 entry = nodes.entry()
-                entry += nodes.Text(cell) if cell else None
+                if cell:
+                    #entry += nodes.Text(cell)
+                    entry += nodes.paragraph(text=cell)
                 row_node += entry
             rows.append(row_node)
         tbody = nodes.tbody()
