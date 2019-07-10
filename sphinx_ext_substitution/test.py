@@ -10,7 +10,9 @@ def doc(build="_build-default", subs='-D substitute_path=substitutions/one-yaml/
     """Generic function to build a document with different modes"""
     assert not os.system('rm -rf testdata/proj/%s/'%build)
     assert not os.system('cd testdata/ ; sphinx-build -M html proj/ proj/%s/ -v %s %s'%(build, subs, opts))
-    data = open(pjoin('testdata/proj/', build, 'html', 'index.html')).read()
+    data = { }
+    data['index'] = open(pjoin('testdata/proj/', build, 'html', 'index.html')).read()
+    data['sub-list'] = open(pjoin('testdata/proj/', build, 'html', 'sub-list.html')).read()
     return data
 
 @pytest.fixture(scope='session')
@@ -31,72 +33,80 @@ def doc1_original():
 
 
 def test_role(doc1_default):
-    assert "A0-original" in doc1_default
+    index = doc1_default['index']
+    assert "A0-original" in index
 
-    assert "A1-id" not in doc1_default
-    assert "A1-original" in doc1_default
-    assert "A1-substitute" not in doc1_default
+    assert "A1-id" not in index
+    assert "A1-original" in index
+    assert "A1-substitute" not in index
 
-    assert "A2-id" not in doc1_default
-    assert "A2-original" not in doc1_default
-    assert "A2-substitute" in doc1_default
+    assert "A2-id" not in index
+    assert "A2-original" not in index
+    assert "A2-substitute" in index
 
 def test_role_inline_markup(doc1_default):
-    assert "A3-A3" not in doc1_default
-    assert "<em>A3-original</em>" in doc1_default
+    index = doc1_default['index']
+    assert "A3-A3" not in index
+    assert "<em>A3-original</em>" in index
 
-    assert "<em>A4-substitute</em>" in doc1_default
+    assert "<em>A4-substitute</em>" in index
 
 
 def test_directive(doc1_default):
-    assert 'A10-id' not in doc1_default
-    assert 'A10.1-original' in doc1_default
-    assert '<em>A10.2-original</em>' in doc1_default
+    index = doc1_default['index']
+    assert 'A10-id' not in index
+    assert 'A10.1-original' in index
+    assert '<em>A10.2-original</em>' in index
 
-    assert 'A11.1-original' not in doc1_default
-    assert '<em>A11.2-original</em>' not in doc1_default
-    assert 'A11.1-substitute' in doc1_default
-    assert '<em>A11.2-substitute</em>' in doc1_default
+    assert 'A11.1-original' not in index
+    assert '<em>A11.2-original</em>' not in index
+    assert 'A11.1-substitute' in index
+    assert '<em>A11.2-substitute</em>' in index
 
 
 def test_mode_both(doc1_both):
-    assert 'A2-original' in doc1_both
-    assert 'A2-substitute' in doc1_both
+    index = doc1_both['index']
+    assert 'A2-original' in index
+    assert 'A2-substitute' in index
 
-    assert 'A10.1-original' in doc1_both
-    assert 'A11.1-original' in doc1_both
-    assert 'A11.2-substitute' in doc1_both
+    assert 'A10.1-original' in index
+    assert 'A11.1-original' in index
+    assert 'A11.2-substitute' in index
 
 def test_both_inline_markup(doc1_both):
-    assert '<em>A4-original</em>' in doc1_both
-    assert '<em>A4-substitute</em>' in doc1_both
+    index = doc1_both['index']
+    assert '<em>A4-original</em>' in index
+    assert '<em>A4-substitute</em>' in index
 
-    assert '<em>A10.2-original</em>' in doc1_both
-    assert '<em>A11.2-original</em>' in doc1_both
-    assert '<em>A11.2-substitute</em>' in doc1_both
+    assert '<em>A10.2-original</em>' in index
+    assert '<em>A11.2-original</em>' in index
+    assert '<em>A11.2-substitute</em>' in index
 
 def test_both_css_roles(doc1_both):
-    assert re.search('class="substitute-original"[^>]*>\(NO_ID\)', doc1_both)
-    assert re.search('<strong class="substitute-original"[^>]*>\(A1-id\) A1-original', doc1_both)
-    assert re.search('class="substitute-original"[^>]*>\(A2-id\) A2-original', doc1_both)
-    assert re.search('class="substitute-replacement"[^>]*>A2-substitute', doc1_both)
+    index = doc1_both['index']
+    assert re.search('class="substitute-original"[^>]*>\(NO_ID\)', index)
+    assert re.search('<strong class="substitute-original"[^>]*>\(A1-id\) A1-original', index)
+    assert re.search('class="substitute-original"[^>]*>\(A2-id\) A2-original', index)
+    assert re.search('class="substitute-replacement"[^>]*>A2-substitute', index)
     # This test combines <em> in the original and CSS, which is probably not needed:
-    assert re.search('class="substitute-original"[^>]*>\(A3-id\) ?<em>A3-original', doc1_both)
+    assert re.search('class="substitute-original"[^>]*>\(A3-id\) ?<em>A3-original', index)
 
 
 def test_mode_original(doc1_original):
-    assert 'A2-original' in doc1_original
-    assert 'A2-substitute' not in doc1_original
+    index = doc1_original['index']
+    assert 'A2-original' in index
+    assert 'A2-substitute' not in index
 
-    assert 'A10.1-original' in doc1_original
-    assert 'A11.1-original' in doc1_original
-    assert 'A11.2-substitute' not in doc1_original
+    assert 'A10.1-original' in index
+    assert 'A11.1-original' in index
+    assert 'A11.2-substitute' not in index
 
 def test_original_inline_markup(doc1_original):
-    assert '<em>A4-original</em>' in doc1_original
+    index = doc1_original['index']
+    assert '<em>A4-original</em>' in index
 
-    assert '<em>A10.2-original</em>' in doc1_original
-    assert '<em>A11.2-original</em>' in doc1_original
+    assert '<em>A10.2-original</em>' in index
+    assert '<em>A11.2-original</em>' in index
 
 
 
@@ -151,3 +161,12 @@ def test_path_envvar(doc1_path_envvar):
     """Test loading from the *.rst files"""
     test_role(doc1_path_envvar)
     test_directive(doc1_path_envvar)
+
+
+def test_sublist(doc1_default):
+    sub_list = doc1_default['sub-list']
+    assert '<td>A1-id</td>' in sub_list
+    assert '<td>A1-original</td>' in sub_list
+    assert '<td>A2-id</td>' in sub_list
+    assert '<td>A2-original</td>' in sub_list
+    assert '<td>A2-substitute</td>' in sub_list
