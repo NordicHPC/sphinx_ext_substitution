@@ -145,7 +145,6 @@ class SubDirective(SphinxDirective):
             if isinstance(s, (list, statemachine.StringList)):
                 return '\n'.join(s)
             return s
-        print(original, type(original))
         env = self.env
         if not hasattr(env, 'substitute_all_subs'):
             env.substitute_all_subs = { }
