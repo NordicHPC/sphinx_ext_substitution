@@ -69,6 +69,14 @@ configuration option:
 
 * ``original``: Show only the original text without any replacements.
 
+Finally, there is a ``sub-list`` directive::
+
+  .. sub-list::
+
+This directive is replaced with a table that contains all substitution
+IDs, original values, and replacements that have been used in the
+document.
+
 
 When searching for replacement values:
 
