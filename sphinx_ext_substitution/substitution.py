@@ -210,8 +210,10 @@ def purge_sublist(app, env, docname):
     """
     if not hasattr(env, 'substitute_all_subs'):
         return
-    env.substitute_all_subs = [sub for sub in env.substitute_all_subs
-                               if sub['docname'] != docname]
+    all_subs = env.substitute_all_subs
+    for id_, data in env.substitute_all_subs.items():
+        if data['docname'] == docname:
+            del all_subs[id_]
 
 def process_sublist(app, doctree, fromdocname):
     """Find all sub-list directives and fill it with all substitutions."""
