@@ -6,7 +6,6 @@ from docutils import statemachine
 from docutils.parsers.rst import Directive
 
 from sphinx.locale import _
-from sphinx.util.docutils import SphinxDirective
 import sphinx.util.nodes
 
 from .get_replacements import get_substitutions
@@ -118,12 +117,14 @@ def sub_role(name, rawtext, text, lineno, inliner,
 
 
 
-class SubDirective(SphinxDirective):
+class SubDirective(Directive):
     required_arguments = 1
     has_content = True
     def run(self):
-        mode = self.config.substitute_mode
-        subs = get_substitutions(self.config)
+        env = self.state.document.settings.env
+        config = env.config
+        mode = config.substitute_mode
+        subs = get_substitutions(config)
         original = self.content
 
         # Find the ID, if any exists
@@ -145,7 +146,6 @@ class SubDirective(SphinxDirective):
             if isinstance(s, (list, statemachine.StringList)):
                 return '\n'.join(s)
             return s
-        env = self.env
         if not hasattr(env, 'substitute_all_subs'):
             env.substitute_all_subs = { }
         if id_ != 'NO_ID':
@@ -197,7 +197,7 @@ class SubDirective(SphinxDirective):
 class sublist(nodes.General, nodes.Element):
         pass
 
-class SubListDirective(SphinxDirective):
+class SubListDirective(Directive):
     def run(self):
         # This is filled when the process_sublist event is run.
         return [sublist('')]
