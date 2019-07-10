@@ -14,7 +14,7 @@ from .get_replacements import get_substitutions
 class sub(nodes.Admonition, nodes.Element):
     pass
 
-id_re = re.compile("^(?:  \(?([^():]+)  [):]   \s*)", re.VERBOSE)
+id_re = re.compile(r"^(?:  \(?([^():]+)  [):]   \s*)", re.VERBOSE)
 
 class Original(nodes.strong):
     #classes = ['ss-original']
