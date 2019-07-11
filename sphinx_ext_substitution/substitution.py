@@ -62,12 +62,16 @@ def sub_role(name, rawtext, text, lineno, inliner,
     else:
         id_ = 'NO_ID'
         original = text
+    if original:
+        original = original.replace('\x00`', '`')
 
     # Find the replacement value, don't use it for anything yet.
     if id_ in subs:
         replacement = subs[id_]
     else:
         replacement = None
+    if replacement:
+        replacement = replacement.replace('\x00`', '`')
 
     # Save list of substitutions for the sub-list directive
     env = inliner.document.settings.env

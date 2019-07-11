@@ -84,6 +84,20 @@ def test_both_inline_markup(doc1_both):
     assert '<em>A11.2-original</em>' in index
     assert '<em>A11.2-substitute</em>' in index
 
+def test_pre(doc1_default, doc1_both, doc1_original):
+    index = doc1_default['index']
+    assert 'class="pre">A7-original' in index
+    assert 'class="pre">A8-substitute' in index
+
+    index = doc1_both['index']
+    assert 'class="pre">A7-original' in index
+    assert 'class="pre">A8-original' in index
+    assert 'class="pre">A8-substitute' in index
+
+    index = doc1_original['index']
+    assert 'class="pre">A7-original' in index
+    assert 'class="pre">A8-original' in index
+
 def test_both_css_roles(doc1_both):
     index = doc1_both['index']
     assert re.search('class="substitute-original"[^>]*>\(NO_ID\)', index)
