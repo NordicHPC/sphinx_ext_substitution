@@ -11,7 +11,7 @@ import pytest
 def doc(build="_build-default", subs='-D substitute_path=substitutions/one-yaml/', opts=""):
     """Generic function to build a document with different modes"""
     assert not os.system('rm -rf testdata/proj/%s/'%build)
-    assert not os.system('cd testdata/ ; sphinx-build -M html proj/ proj/%s/ -v %s %s'%(build, subs, opts))
+    assert not os.system('cd testdata/ ; PYTHONPATH=.. sphinx-build -M html proj/ proj/%s/ -v %s %s'%(build, subs, opts))
     data = { }
     data['index'] = open(pjoin('testdata/proj/', build, 'html', 'index.html')).read()
     data['sub-list'] = open(pjoin('testdata/proj/', build, 'html', 'sub-list.html')).read()
