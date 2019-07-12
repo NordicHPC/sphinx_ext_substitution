@@ -186,3 +186,20 @@ def test_sublist(doc1_default):
     assert 'A2-id' in sub_list
     assert 'A2-original' in sub_list
     assert 'A2-substitute' in sub_list
+
+
+def test_make_sub_rst():
+    import sphinx_ext_substitution
+    from sphinx_ext_substitution import make_sub_rst
+    id_ = 'AAAA'
+    text = 'BBBB'
+    output = make_sub_rst(id_, text)
+    assert output.startswith(':sub:`')
+    assert output.endswith("`")
+    assert id_ in output
+    assert text in output
+    content = output[6:-1]  # stripping :sub:` and ` from it
+    m = sphinx_ext_substitution.substitution.id_re.match(content)
+    assert m
+    assert m.group(1) == id_
+    assert content[m.end():] == text
