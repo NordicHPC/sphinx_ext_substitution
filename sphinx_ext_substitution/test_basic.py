@@ -100,12 +100,12 @@ def test_pre(doc1_default, doc1_both, doc1_original):
 
 def test_both_css_roles(doc1_both):
     index = doc1_both['index']
-    assert re.search('class="substitute-original"[^>]*>\(NO_ID\)', index)
-    assert re.search('<strong class="substitute-original"[^>]*>\(A1-id\) A1-original', index)
-    assert re.search('class="substitute-original"[^>]*>\(A2-id\) A2-original', index)
-    assert re.search('class="substitute-replacement"[^>]*>A2-substitute', index)
+    assert re.search(r'class="substitute-original"[^>]*>\(NO_ID\)', index)
+    assert re.search(r'<strong class="substitute-original"[^>]*>\(A1-id\) A1-original', index)
+    assert re.search(r'class="substitute-original"[^>]*>\(A2-id\) A2-original', index)
+    assert re.search(r'class="substitute-replacement"[^>]*>A2-substitute', index)
     # This test combines <em> in the original and CSS, which is probably not needed:
-    assert re.search('class="substitute-original"[^>]*>\(A3-id\) ?<em>A3-original', index)
+    assert re.search(r'class="substitute-original"[^>]*>\(A3-id\) ?<em>A3-original', index)
 
 
 def test_mode_original(doc1_original):
