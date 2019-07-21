@@ -216,8 +216,8 @@ def purge_sublist(app, env, docname):
     if not hasattr(env, 'substitute_all_subs'):
         return
     all_subs = env.substitute_all_subs
-    for id_, data in env.substitute_all_subs.items():
-        if data['docname'] == docname:
+    for id_ in list(all_subs.keys()):
+        if all_subs[id_]['docname'] == docname:
             del all_subs[id_]
 
 def process_sublist(app, doctree, fromdocname):
