@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 
+from os.path import dirname, join
 import setuptools
 
 
 with open("README.rst", "r") as fh:
     long_description = fh.read()
 
-requirements = [ line.strip() for line in open("requirements.txt", "r") if line.strip() ]
+requirementstxt = join(dirname(__file__), "requirements.txt")
+requirements = [ line.strip() for line in open(requirementstxt, "r") if line.strip() ]
 
 setuptools.setup(name='sphinx_ext_substitution',
-      version='0.1.0',
+      version='0.1.1',
       description='Sphinx extension for substituting variables',
       long_description=long_description,
       long_description_content_type="text/x-rst",  # ReST is the default
@@ -19,6 +21,7 @@ setuptools.setup(name='sphinx_ext_substitution',
       packages=['sphinx_ext_substitution'],
       keywords='sphinx-extension',
       python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*,",
+      install_requires=requirements,
       classifiers=[
         "Programming Language :: Python :: 3",
         "Development Status :: 4 - Beta",
