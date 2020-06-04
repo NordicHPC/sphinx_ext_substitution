@@ -305,7 +305,7 @@ def setup(app):
     # Add CSS to build
     # Hint is from https://github.com/choldgraf/sphinx-copybutton/blob/master/sphinx_copybutton/__init__.py
     app.connect('builder-inited', init_static_path)
-    app.add_stylesheet("sphinx_ext_substitution.css")
+    app.add_css_file("sphinx_ext_substitution.css")
 
     return {
         'version': '0.1',
