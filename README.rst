@@ -21,6 +21,45 @@ Features include:
   highlighting, so that you can easily compare the current original
   values with your current substitute values.
 - Both role (inline) and directive (paragraph level) support.
+- Theoretical Markdown support via `myst_parser
+  <https://github.com/executablebooks/MyST-Parser>`__.
+
+
+Demo
+----
+
+We have this source where we define several substitutions.  Focus on `A2`:
+
+.. figure:: img/demo-source.png
+
+   We see definition of several types of substitutions.  This comes
+   from the unit tests.
+
+.. figure:: img/demo-replaced.png
+
+   Here we see the default build, with the replaced value included.
+   Any missing replacements keep their default value.
+
+.. figure:: img/demo-original.png
+
+   We might need to be see the original, embedded values.  This is easy.
+
+.. figure:: img/demo-both.png
+
+   Here is the real benefit to sphinx_ext_substitution: compile with
+   *both* values included, so that you can quickly scan the text and
+   make sure that all substitutions
+
+.. figure:: img/demo-sub-list-directive.png
+
+   Here's a second real benefit: listing of all substitution IDs,
+   along with original and replacement values.  This makes it easy to
+   see what new substitutions have been added and to keep them in sync.
+
+All of the above not just applies to inline paragraph text (roles),
+but to block paragraph-level directives (directives).
+
+Substitutions can be maintained easily within YAML or ``.rst``.
 
 
 
