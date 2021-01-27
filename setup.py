@@ -11,7 +11,7 @@ requirementstxt = join(dirname(__file__), "requirements.txt")
 requirements = [ line.strip() for line in open(requirementstxt, "r") if line.strip() ]
 
 setuptools.setup(name='sphinx_ext_substitution',
-      version='0.1.1',
+      version='0.1.2',
       description='Sphinx extension for substituting variables',
       long_description=long_description,
       long_description_content_type="text/x-rst",  # ReST is the default
