@@ -6,6 +6,10 @@
 Test document
 =============
 
+.. toctree::
+
+   sub-list
+
 Roles
 -----
 
