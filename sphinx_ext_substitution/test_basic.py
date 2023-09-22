@@ -33,6 +33,9 @@ def doc1_original():
     return doc(build='_build-original', opts="-D substitute_mode=original")
 
 
+def test_map_id(doc1_default):
+    index = doc1_default['index']
+    assert "A13-id-substitute" in index
 
 def test_role(doc1_default):
     index = doc1_default['index']

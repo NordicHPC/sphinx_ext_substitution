@@ -31,6 +31,8 @@ No replacement (preformatted): :sub:`A7-id: \`\`A7-original\`\``
 
 Replacement (preformatted): :sub:`A8-id: \`\`A8-original\`\``
 
+Map Replacement :sub:`A12-id.A13-id:\`\`A13-original\`\``
+
 Directive with no replacement
 -----------------------------
 
