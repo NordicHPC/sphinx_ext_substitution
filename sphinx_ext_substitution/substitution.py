@@ -66,10 +66,12 @@ def sub_role(name, rawtext, text, lineno, inliner,
         original = original.replace('\x00`', '`')
 
     # Find the replacement value, don't use it for anything yet.
-    if id_ in subs:
-        replacement = subs[id_]
-    else:
-        replacement = None
+    replacement = None
+    for potential_id, value in subs.items():
+        if id_ in potential_id:
+            if replacement is not None:
+                raise UserWarning('Two potential replacements found.')
+            replacement = value
     if replacement:
         replacement = replacement.replace('\x00`', '`')
 

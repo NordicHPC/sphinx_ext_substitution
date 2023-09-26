@@ -10,3 +10,8 @@ A11-id: |
 A12-id:
   A13-id: A13-id-substitute
   A14-id: A14-id-substitute
+
+plant:
+  lfom:
+    rowN: '5'
+    rowB: '5 cm'
