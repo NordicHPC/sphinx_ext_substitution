@@ -23,6 +23,10 @@ Features include:
 - Both role (inline) and directive (paragraph level) support.
 - Theoretical Markdown support via `myst_parser
   <https://github.com/executablebooks/MyST-Parser>`__.
+- Support nested mappings within yaml using `.` to drill into keys.
+- Partial key lookup support. You only need to specify some substring
+  within the key to get the substitution. If it matches more than one,
+  an error will be thrown.
 
 
 Demo
