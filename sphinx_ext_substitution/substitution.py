@@ -10,6 +10,8 @@ from docutils.parsers.rst import Directive
 from sphinx.locale import _
 import sphinx.util.nodes
 
+from jsonpath_ng import jsonpath, parse
+
 from .get_replacements import get_substitutions
 
 class sub(nodes.Admonition, nodes.Element):
@@ -66,12 +68,11 @@ def sub_role(name, rawtext, text, lineno, inliner,
         original = original.replace('\x00`', '`')
 
     # Find the replacement value, don't use it for anything yet.
-    replacement = None
-    for potential_id, value in subs.items():
-        if id_ in potential_id:
-            if replacement is not None:
-                raise UserWarning('Two potential replacements found.')
-            replacement = value
+    if id_ in subs:
+        replacement = subs[id_]
+    else:
+        replacement = _jsonpath_lookup(id_, subs)
+
     if replacement:
         replacement = replacement.replace('\x00`', '`')
 
@@ -124,6 +125,20 @@ def sub_role(name, rawtext, text, lineno, inliner,
     return content, messages
 
 
+def _jsonpath_lookup(id_, subs):
+    try:
+        expression = parse(id_)
+    except:
+        return None
+    matches = [match.value for match in expression.find(subs)]
+    if len(matches) == 0:
+        replacement = None
+    elif all([m == matches[0] for m in matches]):
+        replacement = matches[0]
+    else:
+        raise UserWarning(f'Different replacements found for {id_}... matches found: {matches}')
+    return replacement
+
 
 class SubDirective(Directive):
     required_arguments = 1
@@ -144,6 +159,8 @@ class SubDirective(Directive):
         # Get the replacement value, don't use it yet
         if id_ in subs:
             replacement = subs[id_]
+            if not isinstance(replacement, str):
+                raise UserWarning(f"Yields a non-string substitution for {id_}... resulted in {replacement}")
             replacement = statemachine.StringList(
                                     replacement.splitlines(), source='file')
         else:

@@ -29,16 +29,20 @@ def _load_yaml(fname, substitutions):
     if yaml is None:
         raise RuntimeError("The yaml module is needed (python-yaml) to get definitions from yaml files.")
     data = yaml.load(open(fname), Loader=yaml.SafeLoader)
-    _load_substitutions_map(data, substitutions)
+    _strip_whitespace_recursively(data, substitutions)
+    print("substitutions")
+    print(substitutions)
 
 
-def _load_substitutions_map(data, substitutions, prefix=""):
+def _strip_whitespace_recursively(data, substitutions):
+    """Save this dict's keys as substitutions, recurse with prefix into sub-dicts."""
     for key, value in data.items():
         if key not in substitutions:
             if isinstance(value, str):
-                substitutions[f"{prefix}{key}"] = value.strip()
+                substitutions[key] = value.strip()
             elif isinstance(value, dict):
-                _load_substitutions_map(value, substitutions, f"{prefix}{key}.")
+                substitutions[key] = _strip_whitespace_recursively(value, data[key])
+    return substitutions
 
 
 def load_substitutions(config):
