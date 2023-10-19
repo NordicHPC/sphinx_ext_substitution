@@ -32,7 +32,36 @@ def doc1_original():
     """Document with substitute_mode=original"""
     return doc(build='_build-original', opts="-D substitute_mode=original")
 
+@pytest.fixture(scope='session')
+def doc1_partial_match():
+    """Document with partial_match_substitution=true"""
+    return doc(build='_build-partial-match', opts="-D partial_match_substitution=true")
 
+def testFindJsonPath():
+    from jsonpath_ng import jsonpath, parse
+    # Sample JSON data
+    data = {
+        "name": "John",
+        "address": {
+            "city": "New York",
+            "state": {
+                "code": "NY",
+                "name": "New York"
+            }
+        }
+    }
+
+    # Compile the JSONPath expression
+    expression = parse("$..code")
+
+    # Use the expression to find matches in your data
+    matches = [match.value for match in expression.find(data)]
+
+    print(matches)  # Output: ['NY']
+
+def test_map_id(doc1_default):
+    index = doc1_default['index']
+    assert "A13-id-substitute" in index
 
 def test_role(doc1_default):
     index = doc1_default['index']

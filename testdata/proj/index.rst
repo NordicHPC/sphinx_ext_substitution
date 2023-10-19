@@ -31,6 +31,18 @@ No replacement (preformatted): :sub:`A7-id: \`\`A7-original\`\``
 
 Replacement (preformatted): :sub:`A8-id: \`\`A8-original\`\``
 
+Map Replacement :sub:`$.A12-id.A13-id:\`\`A13-original\`\``
+
+Map Replacement :sub:`$.plant.lfom.rowN:\`\`rown-og\`\``
+
+Map Replacement :sub:`$..lfom.rowN:\`\`rown-og\`\``
+
+Map Replacement :sub:`$..rowN:\`\`rown-og\`\``
+
+Map Replacement :sub:`$..rowB:\`\`rown-og\`\``
+
+Map Replacement :sub:`rowb:\`\`rown-og\`\``
+
 Directive with no replacement
 -----------------------------
 
@@ -52,4 +64,4 @@ Directive with replacement
 Directive with no content
 -------------------------
 
-.. sub:: A12-id
+.. sub:: $.A12-id.A13-id
