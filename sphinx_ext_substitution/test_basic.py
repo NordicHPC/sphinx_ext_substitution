@@ -33,9 +33,9 @@ def doc1_original():
     return doc(build='_build-original', opts="-D substitute_mode=original")
 
 @pytest.fixture(scope='session')
-def doc1_original():
+def doc1_partial_match():
     """Document with partial_match_substitution=true"""
-    return doc(build='_build-original', opts="-D partial_match_substitution=true")
+    return doc(build='_build-partial-match', opts="-D partial_match_substitution=true")
 
 def testFindJsonPath():
     from jsonpath_ng import jsonpath, parse
