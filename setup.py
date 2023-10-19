@@ -10,8 +10,12 @@ with open("README.rst", "r") as fh:
 requirementstxt = join(dirname(__file__), "requirements.txt")
 requirements = [ line.strip() for line in open(requirementstxt, "r") if line.strip() ]
 
+version_ns = { }
+exec(open('sphinx_ext_substitution/_version.py').read(), version_ns)
+version = version_ns['__version__']
+
 setuptools.setup(name='sphinx_ext_substitution',
-      version='0.1.2',
+      version=version,
       description='Sphinx extension for substituting variables',
       long_description=long_description,
       long_description_content_type="text/x-rst",  # ReST is the default

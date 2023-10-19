@@ -13,6 +13,8 @@ import sphinx.util.nodes
 from jsonpath_ng import jsonpath, parse
 
 from .get_replacements import get_substitutions
+from . import __version__
+
 
 class sub(nodes.Admonition, nodes.Element):
     pass
@@ -327,7 +329,7 @@ def setup(app):
     app.add_css_file("sphinx_ext_substitution.css")
 
     return {
-        'version': '0.1',
+        'version': __version__,
         'parallel_read_safe': True,
         'parallel_write_safe': True,
         }
