@@ -197,8 +197,9 @@ Currently there are two Sphinx variables defined:
   need for both, but it provides more flexible configuration for
   integration to your build system.
 
-* If ``partial_match_substitution`` set to true, then only a partial
-  string match to the key will result in a substitution.
+..
+  * If ``partial_match_substitution`` set to true, then only a partial
+    string match to the key will result in a substitution.
 
 
 Development and maintenance
